@@ -7,11 +7,8 @@ function App() {
       <div className="bg-white shadow-md">
         <SideBarComponent />
       </div>
-      <div className="flex-1 p-4">
-        <h1 className="text-3xl font-extrabold text-gray-800 mt-5 ml-3">Accounts</h1>
-      </div>
     </div>
   );
-};
+}
 
 export default App;
