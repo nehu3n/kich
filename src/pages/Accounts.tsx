@@ -3,7 +3,7 @@ function AccountsPage() {
     <>
       <div className="fixed inline-flex top-0 left-56 h-14 w-screen overflow-auto bg-white">
         <div className="ml-3 w-96">
-          <div className="relative border shadow-sm shadow-orange-100 rounded-md">
+          <div className="relative border shadow-sm shadow-orange-200 rounded-md cursor-text">
             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -26,11 +26,9 @@ function AccountsPage() {
           </div>
         </div>
       </div>
-      <div className="absolute ml-[270px] -mt-[775px]">
+      <div className="absolute ml-[270px] -mt-[775px] 2xl:ml-[270px] 2xl:-mt-[985px]">
         <div className="inline-flex mt-14">
-          <h1 className="text-3xl font-extrabold text-gray-800">
-            Accounts
-          </h1>
+          <h1 className="text-3xl font-extrabold text-gray-800">Accounts</h1>
           <button
             type="button"
             className="font-semibold border rounded px-5 h-8 ml-5 mt-1 border-cyan-300 hover:border-cyan-500"
