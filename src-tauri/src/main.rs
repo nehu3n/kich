@@ -2,8 +2,12 @@
 
 mod internal {
     pub mod crypto;
+    pub mod db {
+        pub mod accounts;
+    }
 }
 
+use internal::db::accounts::{add_account, delete_account, get_account};
 // use internal::crypto::{decrypt, encrypt};
 use serde::{Deserialize, Serialize};
 
@@ -15,6 +19,21 @@ pub struct Account {
     phone: String,
     notes: Vec<String>,
     tags: Vec<String>,
+}
+
+#[tauri::command]
+fn add_account_(account: Account, password: &str, id: &str) {
+    add_account(&account, password, id);
+}
+
+#[tauri::command]
+fn get_account_(password: &str, id: &str) {
+    get_account(password, id);
+}
+
+#[tauri::command]
+fn delete_account_(id: &str) {
+    delete_account(id);
 }
 
 /*
@@ -31,8 +50,17 @@ fn decrypt_(key_str: &str, encrypted_data: &str) -> Result<Account, String> {
 
 fn main() {
     tauri::Builder::default()
+        .setup(|_app| {
+            internal::db::accounts::init();
+
+            Ok(())
+        })
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![
+            add_account_,
+            get_account_,
+            delete_account_
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
