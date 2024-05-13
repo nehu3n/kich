@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::Path;
 
-use polodb_core::{bson::doc, results::DeleteResult, Database};
+use polodb_core::{bson::doc, results::{DeleteResult, UpdateResult}, Database};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -105,6 +105,25 @@ pub fn get_account(password: &str, id: &str) -> Account {
     account_data
 }
 
+pub fn get_all_accounts(password: &str) -> Vec<Account> {
+    let db = open_db();
+
+    let collection = db.collection::<InsertAccount>("accounts");
+
+    let accounts = collection.find(None);
+
+    let mut account_list = vec![];
+
+    if let Ok(account) = accounts {
+        account.for_each(|acc| {
+            let acc = acc.unwrap();
+            account_list.push(decrypt::<Account>(password, &acc.account_data).unwrap());
+        });
+    }
+
+    account_list
+}
+
 pub fn delete_account(id: &str) -> DeleteResult {
     let db = open_db();
 
@@ -114,5 +133,24 @@ pub fn delete_account(id: &str) -> DeleteResult {
         .delete_one(doc! {
             "id": id.to_string(),
         })
+        .unwrap();
+}
+
+pub fn update_account(password: &str, id: &str, account: &Account) -> UpdateResult {
+    let db = open_db();
+
+    let collection = db.collection::<InsertAccount>("accounts");
+
+    return collection
+        .update_many(
+            doc! {
+                "id": id.to_string()
+            },
+            doc! {
+                "$set": doc! {
+                    "account_data": encrypt(password, account).unwrap(),
+                },
+            },
+        )
         .unwrap();
 }

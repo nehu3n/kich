@@ -7,7 +7,10 @@ mod internal {
     }
 }
 
-use internal::db::accounts::{add_account, delete_account, get_account};
+use internal::db::accounts::{
+    add_account, delete_account, get_account, get_all_accounts, update_account,
+};
+use polodb_core::results::{DeleteResult, UpdateResult};
 // use internal::crypto::{decrypt, encrypt};
 use serde::{Deserialize, Serialize};
 
@@ -27,13 +30,23 @@ fn add_account_(account: Account, password: &str, id: &str) {
 }
 
 #[tauri::command]
-fn get_account_(password: &str, id: &str) {
-    get_account(password, id);
+fn get_account_(password: &str, id: &str) -> Account {
+    return get_account(password, id);
 }
 
 #[tauri::command]
-fn delete_account_(id: &str) {
-    delete_account(id);
+fn get_all_accounts_(password: &str) -> Vec<Account> {
+    return get_all_accounts(password);
+}
+
+#[tauri::command]
+fn delete_account_(id: &str) -> DeleteResult {
+    return delete_account(id);
+}
+
+#[tauri::command]
+fn update_account_(password: &str, id: &str, account: Account) -> UpdateResult {
+    return update_account(password, id, &account);
 }
 
 /*
@@ -59,7 +72,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             add_account_,
             get_account_,
-            delete_account_
+            get_all_accounts_,
+            delete_account_,
+            update_account_
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
