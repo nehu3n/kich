@@ -11,7 +11,7 @@ function SideBarComponent() {
         </div>
         <nav className="space-y-2">
           <Link
-            to="/accounts"
+            to="/app/accounts"
             className="flex items-center px-3 py-2 rounded-md hover:bg-cyan-50"
           >
             <svg
@@ -33,7 +33,7 @@ function SideBarComponent() {
             </span>
           </Link>
           <Link
-            to="/keys"
+            to="/app/keys"
             className="flex items-center px-3 py-2 rounded-md hover:bg-cyan-50"
           >
             <svg
@@ -54,7 +54,7 @@ function SideBarComponent() {
             <span className="ml-1 text-md font-medium text-gray-700">Keys</span>
           </Link>
           <Link
-            to="/transfer"
+            to="/app/transfer"
             className="flex items-center px-3 py-2 rounded-md hover:bg-cyan-50"
           >
             <svg
@@ -144,7 +144,7 @@ function SideBarComponent() {
           <span className="ml-1 mt-1 text-gray-700 text-xl font-bold">
             Kich
           </span>
-          <Link to="/configuration" className="ml-36 relative">
+          <Link to="/app/configuration" className="ml-36 relative">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

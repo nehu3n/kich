@@ -10,13 +10,22 @@ import AccountsPage from "./pages/Accounts";
 import KeysPage from "./pages/Keys";
 import TransferPage from "./pages/Transfer";
 import ConfigurationPage from "./pages/Configuration";
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
+
+const register = true;
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Toaster />
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}>
+        {!register ? (
+          <Route path="/" element={<RegisterPage />} />
+        ) : (
+          <Route path="/" element={<LoginPage />} />
+        )}
+        <Route path="/app" element={<App />}>
           <Route path="accounts" element={<AccountsPage />} />
           <Route path="keys" element={<KeysPage />} />
           <Route path="transfer" element={<TransferPage />} />
