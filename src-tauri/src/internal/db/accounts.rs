@@ -1,7 +1,11 @@
 use std::fs;
 use std::path::Path;
 
-use polodb_core::{bson::doc, results::{DeleteResult, UpdateResult}, Database};
+use polodb_core::{
+    bson::doc,
+    results::{DeleteResult, UpdateResult},
+    Database,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -47,7 +51,8 @@ struct InsertAccount {
     account_data: String,
 }
 
-pub fn add_account(account: &Account, password: &str, id: &str) {
+#[tauri::command]
+pub fn add_account(account: Account, password: &str, id: &str) {
     let db: Database = open_db();
 
     let collection = db.collection::<InsertAccount>("accounts");
@@ -66,7 +71,7 @@ pub fn add_account(account: &Account, password: &str, id: &str) {
             return;
         }
 
-        let account_data = encrypt(password, account).unwrap();
+        let account_data = encrypt(password, &account).unwrap();
 
         collection
             .insert_one(InsertAccount {
@@ -77,6 +82,7 @@ pub fn add_account(account: &Account, password: &str, id: &str) {
     }
 }
 
+#[tauri::command]
 pub fn get_account(password: &str, id: &str) -> Account {
     let db = open_db();
 
@@ -105,6 +111,7 @@ pub fn get_account(password: &str, id: &str) -> Account {
     account_data
 }
 
+#[tauri::command]
 pub fn get_all_accounts(password: &str) -> Vec<Account> {
     let db = open_db();
 
@@ -124,6 +131,7 @@ pub fn get_all_accounts(password: &str) -> Vec<Account> {
     account_list
 }
 
+#[tauri::command]
 pub fn delete_account(id: &str) -> DeleteResult {
     let db = open_db();
 
@@ -136,7 +144,8 @@ pub fn delete_account(id: &str) -> DeleteResult {
         .unwrap();
 }
 
-pub fn update_account(password: &str, id: &str, account: &Account) -> UpdateResult {
+#[tauri::command]
+pub fn update_account(password: &str, id: &str, account: Account) -> UpdateResult {
     let db = open_db();
 
     let collection = db.collection::<InsertAccount>("accounts");
@@ -148,7 +157,7 @@ pub fn update_account(password: &str, id: &str, account: &Account) -> UpdateResu
             },
             doc! {
                 "$set": doc! {
-                    "account_data": encrypt(password, account).unwrap(),
+                    "account_data": encrypt(password, &account).unwrap(),
                 },
             },
         )
