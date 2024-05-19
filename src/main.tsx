@@ -13,7 +13,9 @@ import ConfigurationPage from "./pages/Configuration";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 
-const register = true;
+import { hasMasterKey } from "./lib/keys";
+
+const register = await hasMasterKey();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

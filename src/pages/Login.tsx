@@ -1,17 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { checkMasterKey } from "../lib/keys";
+import { toast } from "sonner";
 
 function LoginPage() {
   const [inputPassword, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const passwordInput = document.getElementById(
       "password"
     ) as HTMLInputElement;
-    
+
+    if (!(await checkMasterKey(passwordInput.value))) {
+      toast.error("Wrong password", {
+        className: "bg-red-400",
+        position: "top-right",
+      });
+
+      passwordInput.value = "";
+
+      return;
+    }
+
     setInputPassword(passwordInput.value);
     passwordInput.value = "";
 

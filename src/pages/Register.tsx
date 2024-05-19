@@ -1,10 +1,26 @@
 import { useState } from "react";
+import { setMasterKey } from "../lib/keys";
+import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
   const [loading, setLoading] = useState(false);
-  
-  function handleRegister() {}
+  const navigate = useNavigate();
 
+  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const passwordInput = document.getElementById(
+      "password"
+    ) as HTMLInputElement;
+    
+    setMasterKey(passwordInput.value);
+    passwordInput.value = "";
+
+    setLoading(true);
+
+    setTimeout(() => {
+      navigate("/app/accounts");
+    }, 2500);
+  };
   return (
     <>
       {!loading ? (
@@ -61,7 +77,7 @@ function RegisterPage() {
               />
             </svg>
 
-            <h1 className="text-2xl font-bold">Logging in...</h1>
+            <h1 className="text-2xl font-bold">Registering...</h1>
           </div>
         </div>
       )}
