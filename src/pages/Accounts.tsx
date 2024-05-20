@@ -6,14 +6,17 @@ function AccountsPage() {
   const [modalIsOpen, setIsOpen] = useState({
     modalAccount: false,
     modalAccountID: false,
+    modalTags: false,
   });
+
+  const [tags, setTags] = useState<string[]>([]);
 
   let account = {
     username: "",
     email: "",
     password: "",
     phone: "",
-    notes: [""],
+    notes: ``,
     tags: [""],
   };
 
@@ -24,20 +27,27 @@ function AccountsPage() {
     setIsOpen({
       modalAccount: true,
       modalAccountID: false,
+      modalTags: false,
     });
+
+    setTags([]);
   }
 
   function closeModalAccount() {
     setIsOpen({
       modalAccount: false,
       modalAccountID: false,
+      modalTags: false,
     });
+
+    setTags([]);
   }
 
   function openModalAccountID() {
     setIsOpen({
       modalAccount: false,
       modalAccountID: true,
+      modalTags: false,
     });
   }
 
@@ -45,8 +55,73 @@ function AccountsPage() {
     setIsOpen({
       modalAccount: false,
       modalAccountID: false,
+      modalTags: false,
+    });
+
+    setTags([]);
+  }
+
+  function openModalTags() {
+    if (tags.length == 0)
+      return toast.error("You need to add at least 1 tag", {
+        duration: 2000,
+        className: "bg-red-400",
+        position: "top-right",
+      });
+
+    setIsOpen({
+      modalAccount: true,
+      modalAccountID: false,
+      modalTags: true,
     });
   }
+
+  function closeModalTags() {
+    setIsOpen({
+      modalAccount: true,
+      modalAccountID: false,
+      modalTags: false,
+    });
+  }
+
+  const addTagHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    if (tags.length >= 6) {
+      return toast.error("You can only add 6 tags", {
+        duration: 2000,
+        className: "bg-red-400",
+        position: "top-right",
+      });
+    }
+
+    const tag = (
+      e.currentTarget as HTMLButtonElement
+    ).parentElement?.querySelector("input[name='tags']") as HTMLInputElement;
+
+    if (tag.value == "") {
+      return toast.error("Tag cannot be empty", {
+        duration: 2000,
+        className: "bg-red-400",
+        position: "top-right",
+      });
+    }
+
+    account.tags.push(tag.value);
+    setTags([...tags, tag.value]);
+
+    tag.value = "";
+
+    toast.success("Tag added", {
+      duration: 1500,
+      className: "bg-green-400",
+      position: "top-right",
+    });
+  };
+
+  const removeTagHandler = (tag: number) => {
+    setTags(tags.filter((_, i) => i !== tag));
+  };
 
   return (
     <>
@@ -133,18 +208,12 @@ function AccountsPage() {
               const notes = (
                 e.currentTarget as HTMLFormElement
               ).elements.namedItem("notes") as HTMLTextAreaElement;
-              const tags = (
-                e.currentTarget as HTMLFormElement
-              ).elements.namedItem("tags") as HTMLInputElement;
 
               account.username = username.value;
               account.email = email.value;
               account.password = password.value;
               account.phone = phone.value;
-              account.notes = [notes.value];
-              tags.value.split(", ").forEach((tag) => {
-                account.tags.push(tag);
-              });
+              account.notes = notes.value;
 
               closeModalAccount();
               openModalAccountID();
@@ -191,21 +260,78 @@ function AccountsPage() {
             ></textarea>
 
             <label className="block text-sm font-bold mb-2">Tags</label>
-            <input
-              type="text"
-              className="h-8 w-full rounded mb-3 border px-2"
-              name="tags"
-              placeholder="tag1, tag2, tag3, tag4"
-            />
+            <div className="inline-flex">
+              <input
+                type="text"
+                className="h-8 w-28 rounded mb-3 border px-2"
+                name="tags"
+                maxLength={12}
+              />
+              <button
+                type="button"
+                className="ml-2 h-8 w-16 font-medium rounded border border-cyan-400 hover:border-cyan-600"
+                onClick={addTagHandler}
+              >
+                Add tag
+              </button>
+
+              <button
+                type="button"
+                onClick={openModalTags}
+                className="ml-5 mt-0.5 border rounded-full w-fit h-fit px-1 hover:border-gray-400"
+              >
+                <span className="font-bold">{tags.length}</span> tags added
+              </button>
+            </div>
 
             <button
               type="submit"
-              className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded mt-3"
+              className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded mt-6"
             >
-              Add
+              Submit
             </button>
           </form>
         </div>
+      </Modal>
+
+      <Modal
+        isOpen={modalIsOpen.modalTags}
+        onRequestClose={closeModalTags}
+        className="h-[220px] w-96 bg-white rounded fixed top-[30%] left-[33%] 2xl:top-[35%] 2xl:left-[40%] transform animate-fade-down"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+        contentLabel="Accounts Modal"
+      >
+        <div className="inline-flex">
+          <h1 className="text-2xl font-bold m-3">Tags</h1>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            className="w-6 h-6 mt-4 ml-64 cursor-pointer"
+            onClick={closeModalTags}
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
+          </svg>
+        </div>
+
+        <ul className="list-inside ml-4 mt-3 list-none flex flex-wrap">
+          {tags.map((tag, i) => (
+            <li key={i} className="mr-2 mb-2">
+              <span
+                onClick={() => removeTagHandler(i)}
+                className="bg-gray-200 px-2 py-1 rounded-full hover:bg-red-400"
+              >
+                {tag}
+              </span>
+            </li>
+          ))}
+        </ul>
       </Modal>
 
       <Modal
@@ -246,9 +372,10 @@ function AccountsPage() {
               accountId = id.value;
 
               closeModalAccountID();
+
               toast.success("Account added!", {
                 duration: 2000,
-                className: "bg-green-200",
+                className: "bg-green-400",
                 position: "top-right",
               });
             }}

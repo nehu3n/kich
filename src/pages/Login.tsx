@@ -4,7 +4,6 @@ import { checkMasterKey } from "../lib/keys";
 import { toast } from "sonner";
 
 function LoginPage() {
-  const [inputPassword, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -25,7 +24,6 @@ function LoginPage() {
       return;
     }
 
-    setInputPassword(passwordInput.value);
     passwordInput.value = "";
 
     setLoading(true);
